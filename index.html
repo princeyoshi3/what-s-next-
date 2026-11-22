@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171914">
+  <meta name="description" content="A random conversation topic challenge for friends and solo players.">
+  <title>What's Next? — Start a conversation</title>
+  <style>
+    :root {
+      --ink: #1b1d18;
+      --muted: #72766c;
+      --paper: #f4f3ed;
+      --card: #fffef9;
+      --line: #dedfd6;
+      --lime: #d8ff73;
+      --green: #315844;
+      --orange: #ff9169;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% 12%, rgba(216, 255, 115, .32), transparent 21rem),
+        var(--paper);
+      color: var(--ink);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button { font: inherit; }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(27, 29, 24, .09);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+      font-size: 20px;
+      letter-spacing: -.055em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      background: var(--lime);
+      font-size: 16px;
+      transform: rotate(-8deg);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .points {
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: rgba(255, 254, 249, .75);
+      padding: 0 13px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .points strong {
+      color: var(--ink);
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .reset-button {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--card);
+      color: var(--ink);
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .account-button {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--card);
+      color: var(--ink);
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .buddy-button {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--lime);
+      color: var(--ink);
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .record-details {
+      grid-column: 1 / -1;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 254, 249, .75);
+      overflow: hidden;
+    }
+
+    .record-details summary {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      list-style: none;
+      padding: 0 17px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .record-details summary::-webkit-details-marker { display: none; }
+    .record-details summary::after { content: "+"; font-size: 16px; color: var(--ink); }
+    .record-details[open] summary::after { content: "−"; }
+    .record-details .stats-card { margin: 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+
+    .buddy-list { display: grid; gap: 7px; max-height: 190px; overflow-y: auto; margin: 14px 0; }
+    .buddy-row {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fafaf5;
+      padding: 8px 10px;
+    }
+    .buddy-row strong { display: block; font-size: 12px; }
+    .buddy-row span { color: var(--muted); font-size: 10px; }
+    .buddy-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .buddy-actions input {
+      min-width: 0;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 0 11px;
+      color: var(--ink);
+    }
+
+    .profile-code-box {
+      margin: 12px 0;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fafaf5;
+      padding: 10px;
+    }
+
+    .profile-code-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    .profile-code-box input {
+      width: 100%;
+      margin-top: 5px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      outline: none;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      place-items: center;
+      background: rgba(23, 25, 20, .28);
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+
+    .modal-backdrop.open { display: grid; }
+
+    .account-modal {
+      width: min(390px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: 0 24px 70px rgba(42, 48, 38, .18);
+      padding: 22px;
+    }
+
+    .account-modal h2 { margin: 0 0 5px; font-size: 21px; letter-spacing: -.04em; }
+    .account-modal p { margin: 0 0 16px; color: var(--muted); font-size: 11px; }
+    .account-list { display: grid; gap: 7px; max-height: 180px; overflow-y: auto; margin-bottom: 14px; }
+    .account-row {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fafaf5;
+      padding: 0 11px;
+      cursor: pointer;
+    }
+    .account-row.active { border-color: var(--green); background: #edf3ea; }
+    .account-row strong { font-size: 12px; }
+    .account-row span { color: var(--muted); font-size: 10px; }
+    .account-form { display: flex; gap: 8px; }
+    .account-form input {
+      min-width: 0;
+      height: 42px;
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 0 11px;
+      color: var(--ink);
+      outline: none;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+    main {
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr) 210px;
+      gap: 28px;
+      min-height: calc(100vh - 82px);
+      align-items: center;
+      padding: 42px 0;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-self: stretch;
+      justify-content: center;
+    }
+
+    .side-label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin: 0 0 7px 2px;
+    }
+
+    .category-button {
+      width: 100%;
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: .16s ease;
+    }
+
+    .category-button:hover { color: var(--ink); background: rgba(255, 255, 255, .5); }
+    .category-button.active {
+      border-color: var(--line);
+      background: var(--card);
+      color: var(--ink);
+      box-shadow: 0 8px 26px rgba(35, 42, 32, .06);
+    }
+
+    .category-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: #ecece4;
+      font-size: 16px;
+    }
+
+    .category-button.active .category-icon { background: var(--lime); }
+    .category-name { font-size: 12px; font-weight: 800; }
+    .category-count { display: block; color: var(--muted); font-size: 10px; margin-top: 1px; }
+
+    .game-card {
+      min-height: 540px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(27, 29, 24, .12);
+      border-radius: 22px;
+      background: var(--card);
+      box-shadow: 0 24px 70px rgba(42, 48, 38, .09);
+      padding: 52px 62px;
+      text-align: center;
+    }
+
+    .game-card::before {
+      content: "";
+      width: 230px;
+      height: 230px;
+      position: absolute;
+      right: -105px;
+      top: -125px;
+      border-radius: 50%;
+      background: rgba(216, 255, 115, .55);
+    }
+
+    .round-row {
+      position: absolute;
+      top: 24px;
+      left: 28px;
+      right: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .timer {
+      min-width: 58px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: white;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer.running { background: var(--lime); border-color: #b4ce67; }
+
+    .topic-eyebrow {
+      margin: 18px 0 18px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .topic {
+      max-width: 620px;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.03;
+      letter-spacing: -.055em;
+      text-wrap: balance;
+    }
+
+    .topic.animate {
+      animation: topicIn .35s cubic-bezier(.2, .7, .2, 1);
+    }
+
+    @keyframes topicIn {
+      from { opacity: 0; transform: translateY(8px) rotate(.3deg); }
+      to { opacity: 1; transform: translateY(0) rotate(0); }
+    }
+
+    .game-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: 34px;
+    }
+
+    .answer-tab {
+      min-width: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .answer-tab span {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .14);
+      font-size: 11px;
+    }
+
+    .answer-tab.could-not {
+      background: #efefE8;
+      color: #8a5141;
+    }
+
+    .answer-tab.could-not span {
+      background: #ffb69d;
+      color: #6d3f32;
+    }
+
+    .button {
+      height: 48px;
+      border: 0;
+      border-radius: 9px;
+      padding: 0 17px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 850;
+      transition: transform .12s, background .15s;
+    }
+
+    .button:active { transform: translateY(1px); }
+    .button-primary { background: var(--ink); color: white; min-width: 145px; }
+    .button-primary:hover { background: #303329; }
+    .button-secondary { background: #efefe8; color: var(--ink); }
+    .button-secondary:hover { background: #e7e8df; }
+
+    .stats-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 254, 249, .75);
+      padding: 17px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .stat + .stat { border-top: 1px solid var(--line); }
+    .stat span { color: var(--muted); font-size: 11px; }
+    .stat strong { font-size: 20px; letter-spacing: -.04em; }
+
+    .streak {
+      border-radius: 12px;
+      background: var(--green);
+      color: white;
+      padding: 16px 17px;
+    }
+
+    .streak-label { color: #c4d5ca; font-size: 9px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+    .streak strong { display: block; margin-top: 3px; font-size: 25px; letter-spacing: -.05em; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 10;
+      transform: translate(-50%, 20px);
+      border-radius: 99px;
+      background: var(--ink);
+      color: white;
+      padding: 11px 16px;
+      opacity: 0;
+      pointer-events: none;
+      font-size: 12px;
+      font-weight: 750;
+      transition: .2s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 980px) {
+      main { grid-template-columns: 155px minmax(0, 1fr); }
+      .right-panel {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        align-self: stretch;
+      }
+      .right-panel > .side-label { grid-column: 1 / -1; }
+      .right-panel .stats-card,
+      .right-panel .streak { margin: 0; }
+    }
+
+    @media (max-width: 680px) {
+      .shell { width: min(100% - 24px, 1180px); }
+      header { height: 68px; }
+      main {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        align-content: start;
+        padding: 18px 0 24px;
+      }
+      .side-panel { display: grid; grid-template-columns: repeat(4, 1fr); order: 2; }
+      .side-label { display: none; }
+      .category-button { justify-content: center; padding: 7px; min-height: 58px; }
+      .category-name { font-size: 10px; }
+      .category-count { display: none; }
+      .category-icon { width: 30px; height: 30px; }
+      .game-card { min-height: 520px; padding: 58px 22px 40px; }
+      .topic { font-size: clamp(34px, 11vw, 52px); min-height: 200px; }
+      .game-actions { width: 100%; flex-direction: column; }
+      .answer-tab { width: 100%; min-height: 48px; }
+      .points { padding: 0 9px; }
+      .points span { display: none; }
+      .header-actions { gap: 5px; }
+      .account-button,
+      .buddy-button,
+      .reset-button { max-width: 72px; overflow: hidden; text-overflow: ellipsis; }
+      .right-panel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .right-panel .streak { min-height: 96px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark">?</span> What's Next?</div>
+      <div class="header-actions">
+        <div class="points"><span>Points</span><strong id="points">0</strong></div>
+        <button class="account-button" id="account-button">Guest</button>
+        <button class="buddy-button" id="buddy-button">Buddies</button>
+        <button class="reset-button" id="reset-button" title="Reset session" aria-label="Reset session">Reset session</button>
+      </div>
+    </header>
+
+    <main>
+      <aside class="side-panel" aria-label="Topic categories">
+        <p class="side-label">Pick a vibe</p>
+        <button class="category-button active" data-category="Wildcard">
+          <span class="category-icon">✦</span>
+          <span><span class="category-name">Wildcard</span><span class="category-count">All topics</span></span>
+        </button>
+        <button class="category-button" data-category="Deep">
+          <span class="category-icon">◉</span>
+          <span><span class="category-name">Deep</span><span class="category-count">Big questions</span></span>
+        </button>
+        <button class="category-button" data-category="Funny">
+          <span class="category-icon">☺</span>
+          <span><span class="category-name">Funny</span><span class="category-count">Good chaos</span></span>
+        </button>
+        <button class="category-button" data-category="Story">
+          <span class="category-icon">⌁</span>
+          <span><span class="category-name">Story</span><span class="category-count">Tell a tale</span></span>
+        </button>
+      </aside>
+
+      <section class="game-card" aria-live="polite">
+        <div class="round-row">
+          <span id="round-label">READY TO TALK</span>
+          <span class="timer" id="timer">60</span>
+        </div>
+        <p class="topic-eyebrow" id="topic-category">Wildcard</p>
+        <h1 class="topic" id="topic">What did you unexpectedly love as a kid?</h1>
+        <div class="game-actions" role="tablist" aria-label="Answer outcome">
+          <button class="button button-primary answer-tab" id="done-button" role="tab" aria-selected="true">
+            <span>✓</span>I talked about it
+          </button>
+          <button class="button answer-tab could-not" id="could-not-button" role="tab" aria-selected="false">
+            <span>×</span>I couldn't talk about this
+          </button>
+        </div>
+      </section>
+
+      <aside class="side-panel right-panel">
+        <p class="side-label">Your run</p>
+        <div class="stats-card">
+          <div class="stat"><span>Completed</span><strong id="completed">0</strong></div>
+          <div class="stat"><span>Best streak</span><strong id="best-streak">0</strong></div>
+          <div class="stat"><span>Couldn't talk about</span><strong id="missed">0</strong></div>
+        </div>
+        <div class="streak">
+          <span class="streak-label">Current streak</span>
+          <strong><span id="streak">0</span> in a row</strong>
+        </div>
+        <div class="stats-card" style="margin-top:12px">
+          <div class="stat"><span>Level</span><strong id="level">1</strong></div>
+          <div style="height:6px;border-radius:99px;background:#e0e1d7;overflow:hidden">
+            <div id="level-progress" style="height:100%;width:0;background:#315844"></div>
+          </div>
+        </div>
+        <details class="record-details" id="all-time-details">
+          <summary>All-time record</summary>
+          <div class="stats-card">
+            <div class="stat"><span>Total completed</span><strong id="all-completed">0</strong></div>
+            <div class="stat"><span>Best streak</span><strong id="all-best-streak">0</strong></div>
+            <div class="stat"><span>Couldn't talk about</span><strong id="all-missed">0</strong></div>
+          </div>
+        </details>
+      </aside>
+    </main>
+  </div>
+  <div class="toast" id="toast">Nice! +100 points</div>
+
+  <div class="modal-backdrop" id="account-modal-backdrop">
+    <section class="account-modal" role="dialog" aria-modal="true" aria-labelledby="account-title">
+      <h2 id="account-title">Your profiles</h2>
+      <p>Profiles and progress are saved on this device.</p>
+      <div class="account-list" id="account-list"></div>
+      <form class="account-form" id="account-form">
+        <input id="account-name" maxlength="24" autocomplete="nickname" placeholder="Create a username" aria-label="Username">
+        <button class="button button-primary" type="submit">Create</button>
+      </form>
+      <div class="modal-actions">
+        <button class="button button-secondary" id="close-account-modal" type="button">Close</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="buddy-modal-backdrop">
+    <section class="account-modal" role="dialog" aria-modal="true" aria-labelledby="buddy-title">
+      <h2 id="buddy-title">Your buddies</h2>
+      <p id="buddy-profile-name">Share your profile code, or paste a friend's code to connect.</p>
+      <div class="profile-code-box">
+        <span>Your profile code</span>
+        <input id="my-profile-code" readonly aria-label="My profile code">
+      </div>
+      <button class="button button-primary" id="copy-profile-code" type="button" style="width:100%">Copy my profile code</button>
+      <div class="buddy-actions" style="margin-top:10px">
+        <input id="buddy-code" maxlength="500" placeholder="Paste buddy code" aria-label="Buddy profile code">
+        <button class="button button-secondary" id="add-buddy" type="button">Add</button>
+      </div>
+      <div class="buddy-list" id="buddy-list"></div>
+      <div class="modal-actions">
+        <button class="button button-secondary" id="close-buddy-modal" type="button">Close</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const topics = {
+      Wildcard: [
+        "What did you unexpectedly love as a kid?",
+        "What is a tiny thing that made today better?",
+        "Which smell instantly takes you somewhere?",
+        "What song would open a movie about your life?",
+        "What has lately made you curious?",
+        "What is an everyday item you could improve?",
+        "Which small decision changed a lot?",
+        "What would your dream ordinary day include?"
+      ],
+      Deep: [
+        "What does feeling understood mean to you?",
+        "Which belief has changed as you have grown?",
+        "What are you learning to accept?",
+        "What makes you feel most alive?",
+        "How has a friendship changed you?",
+        "What do you hope people notice about you?",
+        "What does success feel like, not look like?",
+        "When have you surprised yourself?"
+      ],
+      Funny: [
+        "What is the most normal thing you do that is secretly weird?",
+        "What would be your terrible superpower?",
+        "Which job do you think you could do for one absurdly long day?",
+        "What is your most useless talent?",
+        "What food combination deserves a chance?",
+        "What would your villain origin story be?",
+        "What is the funniest lie you believed?",
+        "Which chore could be made an Olympic sport?"
+      ],
+      Story: [
+        "Tell me about a time you took the scenic route.",
+        "What is a story you only recently understood?",
+        "Tell me about the best wrong turn you took.",
+        "What is the earliest memory you can hold onto?",
+        "Tell me about a stranger you still remember.",
+        "What did one trip teach you?",
+        "Tell me about a plan that completely failed.",
+        "What is your favorite ordinary life story?"
+      ]
+    };
+
+    const legacySaved = JSON.parse(localStorage.getItem("sidequest-progress") || "{}");
+    let accounts = JSON.parse(localStorage.getItem("whats-next-accounts") || "{}");
+    let currentAccount = localStorage.getItem("whats-next-current") || "Guest";
+    let buddies = JSON.parse(localStorage.getItem("whats-next-buddies") || "[]");
+    const emptySession = () => ({
+      completed: 0,
+      streak: 0,
+      bestStreak: 0,
+      missedTopics: []
+    });
+    const emptyProgress = () => ({
+      points: 0,
+      session: emptySession(),
+      allTime: {
+        completed: 0,
+        bestStreak: 0,
+        missedTopics: []
+      }
+    });
+
+    function normalizeAccount(raw) {
+      if (raw && raw.session && raw.allTime) return {
+        points: Number(raw.points) || 0,
+        session: { ...emptySession(), ...raw.session },
+        allTime: {
+          completed: Number(raw.allTime.completed) || 0,
+          bestStreak: Number(raw.allTime.bestStreak) || 0,
+          missedTopics: Array.isArray(raw.allTime.missedTopics) ? raw.allTime.missedTopics : []
+        }
+      };
+      return {
+        points: Number(raw?.points) || 0,
+        session: {
+          completed: 0,
+          streak: 0,
+          bestStreak: 0,
+          missedTopics: []
+        },
+        allTime: {
+          completed: Number(raw?.completed) || 0,
+          bestStreak: Number(raw?.bestStreak) || 0,
+          missedTopics: Array.isArray(raw?.missedTopics) ? raw.missedTopics : []
+        }
+      };
+    }
+
+    if (!accounts.Guest) {
+      accounts.Guest = Object.keys(legacySaved).length ? {
+        points: Number(legacySaved.points) || 0,
+        completed: Number(legacySaved.completed) || 0,
+        streak: Number(legacySaved.streak) || 0,
+        bestStreak: Number(legacySaved.bestStreak) || 0,
+        missedTopics: Array.isArray(legacySaved.missedTopics) ? legacySaved.missedTopics : []
+      } : emptyProgress();
+    }
+    if (!accounts[currentAccount]) currentAccount = "Guest";
+    accounts[currentAccount] = normalizeAccount(accounts[currentAccount]);
+    let progress = accounts[currentAccount];
+    let session = progress.session;
+    let category = "Wildcard";
+    let seconds = 60;
+    let timerId = null;
+    let lastTopic = "";
+    let currentTopic = "";
+    let audioContext = null;
+
+    const topicElement = document.getElementById("topic");
+    const categoryElement = document.getElementById("topic-category");
+    const timerElement = document.getElementById("timer");
+    const roundLabel = document.getElementById("round-label");
+    const toast = document.getElementById("toast");
+
+    function save() {
+      accounts[currentAccount] = progress;
+      localStorage.setItem("whats-next-accounts", JSON.stringify(accounts));
+      localStorage.setItem("whats-next-current", currentAccount);
+      localStorage.setItem("whats-next-buddies", JSON.stringify(buddies));
+      localStorage.setItem("sidequest-progress", JSON.stringify(progress));
+    }
+
+    function renderStats() {
+      document.getElementById("points").textContent = progress.points.toLocaleString();
+      document.getElementById("completed").textContent = session.completed;
+      document.getElementById("streak").textContent = session.streak;
+      document.getElementById("best-streak").textContent = session.bestStreak;
+      document.getElementById("missed").textContent = session.missedTopics.length;
+      document.getElementById("all-completed").textContent = progress.allTime.completed;
+      document.getElementById("all-best-streak").textContent = progress.allTime.bestStreak;
+      document.getElementById("all-missed").textContent = progress.allTime.missedTopics.length;
+      document.getElementById("account-button").textContent = currentAccount;
+      const level = Math.floor(Math.max(0, progress.points) / 500) + 1;
+      const levelPoints = Math.max(0, progress.points) % 500;
+      document.getElementById("level").textContent = level;
+      document.getElementById("level-progress").style.width = `${levelPoints / 5}%`;
+    }
+
+    function stopTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      timerElement.classList.remove("running");
+    }
+
+    function startTimer() {
+      stopTimer();
+      seconds = 60;
+      timerElement.textContent = seconds;
+      timerElement.classList.add("running");
+      roundLabel.textContent = "CONVERSATION IN PROGRESS";
+      timerId = setInterval(() => {
+        seconds -= 1;
+        timerElement.textContent = seconds;
+        if (seconds <= 0) {
+          stopTimer();
+          timerElement.textContent = "TIME";
+          roundLabel.textContent = "TIME — POINTS LOCKED";
+        }
+      }, 1000);
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timeout);
+      showToast.timeout = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function playSound(type) {
+      try {
+        audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === "suspended") audioContext.resume();
+        const now = audioContext.currentTime;
+        const notes = type === "positive" ? [523.25, 659.25] : [196, 146.83];
+
+        notes.forEach((frequency, index) => {
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          oscillator.type = type === "positive" ? "sine" : "triangle";
+          oscillator.frequency.value = frequency;
+          gain.gain.setValueAtTime(0.0001, now + index * 0.12);
+          gain.gain.exponentialRampToValueAtTime(type === "positive" ? 0.12 : 0.09, now + index * 0.12 + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.12 + 0.18);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now + index * 0.12);
+          oscillator.stop(now + index * 0.12 + 0.2);
+        });
+      } catch (error) {
+        console.warn("Could not play the outcome sound.", error);
+      }
+    }
+
+    function randomTopic() {
+      const pool = category === "Wildcard"
+        ? Object.values(topics).flat()
+        : topics[category];
+      const available = pool.filter(topic => topic !== lastTopic && topic !== currentTopic);
+      const choices = available.length ? available : pool.filter(topic => topic !== lastTopic);
+      const next = choices[Math.floor(Math.random() * choices.length)];
+      lastTopic = next;
+      currentTopic = next;
+      topicElement.textContent = next;
+      categoryElement.textContent = category;
+      topicElement.classList.remove("animate");
+      void topicElement.offsetWidth;
+      topicElement.classList.add("animate");
+    }
+
+    document.querySelectorAll(".category-button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelector(".category-button.active").classList.remove("active");
+        button.classList.add("active");
+        category = button.dataset.category;
+        stopTimer();
+        seconds = 60;
+        timerElement.textContent = seconds;
+        timerElement.classList.remove("running");
+        roundLabel.textContent = "READY TO TALK";
+        randomTopic();
+      });
+    });
+
+    document.getElementById("done-button").addEventListener("click", () => {
+      const bonus = 100;
+      progress.points += bonus;
+      session.completed += 1;
+      session.streak += 1;
+      session.bestStreak = Math.max(session.bestStreak, session.streak);
+      session.missedTopics = session.missedTopics.filter(topic => topic !== currentTopic);
+      progress.allTime.completed += 1;
+      progress.allTime.bestStreak = Math.max(progress.allTime.bestStreak, session.streak);
+      progress.allTime.missedTopics = progress.allTime.missedTopics.filter(topic => topic !== currentTopic);
+      stopTimer();
+      playSound("positive");
+      save();
+      renderStats();
+      showToast(`Nice! +${bonus} points`);
+      seconds = 60;
+      timerElement.textContent = seconds;
+      roundLabel.textContent = "NEW TOPIC";
+      randomTopic();
+    });
+
+    document.getElementById("could-not-button").addEventListener("click", () => {
+      session.streak = 0;
+      progress.points = Math.max(0, progress.points - 50);
+      if (!session.missedTopics.includes(currentTopic)) session.missedTopics.push(currentTopic);
+      if (!progress.allTime.missedTopics.includes(currentTopic)) progress.allTime.missedTopics.push(currentTopic);
+      stopTimer();
+      playSound("negative");
+      seconds = 60;
+      timerElement.textContent = seconds;
+      roundLabel.textContent = "NO WORRIES — NEXT TOPIC";
+      save();
+      renderStats();
+      showToast("That's okay. -50 points");
+      randomTopic();
+    });
+
+    document.getElementById("reset-button").addEventListener("click", () => {
+      stopTimer();
+      session = emptySession();
+      progress.session = session;
+      save();
+      renderStats();
+      seconds = 60;
+      timerElement.textContent = seconds;
+      roundLabel.textContent = "NEW TOPIC";
+      randomTopic();
+      showToast("Session reset");
+    });
+
+    document.querySelector(".game-card").addEventListener("pointerdown", event => {
+      if (event.target.closest("button")) return;
+      if (!timerId && roundLabel.textContent !== "ROUND COMPLETE") startTimer();
+    });
+
+    const accountBackdrop = document.getElementById("account-modal-backdrop");
+
+    function renderAccounts() {
+      const list = document.getElementById("account-list");
+      list.innerHTML = "";
+      Object.keys(accounts).sort((a, b) => a.localeCompare(b)).forEach(name => {
+        const account = accounts[name];
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = `account-row${name === currentAccount ? " active" : ""}`;
+        row.innerHTML = `<strong>${name.replace(/[<>&"]/g, "")}</strong><span>${Number(account.points) || 0} pts</span>`;
+        row.addEventListener("click", () => {
+          currentAccount = name;
+          accounts[name] = normalizeAccount(accounts[name]);
+          progress = accounts[name];
+          session = progress.session;
+          stopTimer();
+          seconds = 60;
+          timerElement.textContent = seconds;
+          roundLabel.textContent = "READY TO TALK";
+          save();
+          renderStats();
+          renderAccounts();
+          accountBackdrop.classList.remove("open");
+          showToast(`Switched to ${name}`);
+        });
+        list.appendChild(row);
+      });
+    }
+
+    document.getElementById("account-button").addEventListener("click", () => {
+      renderAccounts();
+      accountBackdrop.classList.add("open");
+      document.getElementById("account-name").focus();
+    });
+
+    document.getElementById("close-account-modal").addEventListener("click", () => {
+      accountBackdrop.classList.remove("open");
+    });
+
+    accountBackdrop.addEventListener("click", event => {
+      if (event.target === accountBackdrop) accountBackdrop.classList.remove("open");
+    });
+
+    document.getElementById("account-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const input = document.getElementById("account-name");
+      const name = input.value.trim().replace(/\s+/g, " ").slice(0, 24);
+      if (!name) return;
+      if (!accounts[name]) accounts[name] = emptyProgress();
+      currentAccount = name;
+      accounts[name] = normalizeAccount(accounts[name]);
+      progress = accounts[name];
+      session = progress.session;
+      stopTimer();
+      seconds = 60;
+      timerElement.textContent = seconds;
+      roundLabel.textContent = "READY TO TALK";
+      input.value = "";
+      save();
+      renderStats();
+      renderAccounts();
+      accountBackdrop.classList.remove("open");
+      showToast(`Signed in as ${name}`);
+    });
+
+    const buddyBackdrop = document.getElementById("buddy-modal-backdrop");
+
+    function renderBuddies() {
+      const list = document.getElementById("buddy-list");
+      list.innerHTML = "";
+      if (!buddies.length) {
+        list.innerHTML = '<div class="buddy-row"><span>No buddies connected yet.</span></div>';
+        return;
+      }
+      buddies.forEach((buddy, index) => {
+        const row = document.createElement("div");
+        row.className = "buddy-row";
+        row.innerHTML = `<div><strong></strong><span></span></div><button class="button button-secondary" type="button" aria-label="Remove buddy">Remove</button>`;
+        row.querySelector("strong").textContent = buddy.name;
+        row.querySelector("span").textContent = `${buddy.points} points · Level ${buddy.level || 1}`;
+        row.querySelector("button").addEventListener("click", () => {
+          buddies.splice(index, 1);
+          save();
+          renderBuddies();
+          showToast("Buddy removed");
+        });
+        list.appendChild(row);
+      });
+    }
+
+    function makeProfileCode() {
+      const level = Math.floor(Math.max(0, progress.points) / 500) + 1;
+      const namePart = currentAccount
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/gi, "-")
+        .replace(/^-|-$/g, "")
+        .slice(0, 10)
+        .toUpperCase() || "BUDDY";
+      const pointsPart = Math.max(0, Math.floor(progress.points)).toString(36).toUpperCase();
+      return `WN-${namePart}-${level}-${pointsPart}`;
+    }
+
+    function readProfileCode(code) {
+      if (code.startsWith("WN1-")) {
+        const payload = decodeURIComponent(escape(atob(code.slice(4))));
+        const buddy = JSON.parse(payload);
+        if (!buddy.name || !Number.isFinite(Number(buddy.points))) throw new Error("This profile code is invalid.");
+        return {
+          name: String(buddy.name).slice(0, 24),
+          points: Number(buddy.points),
+          level: Number(buddy.level) || 1
+        };
+      }
+      if (code.startsWith("WN-")) {
+        const parts = code.split("-");
+        if (parts.length !== 4) throw new Error("This profile code is incomplete.");
+        const name = parts[1].replace(/-/g, " ").slice(0, 24);
+        const level = Number(parts[2]);
+        const points = parseInt(parts[3], 36);
+        if (!name || !Number.isInteger(level) || !Number.isFinite(points)) throw new Error("This profile code is invalid.");
+        return { name, points, level };
+      }
+      throw new Error("This is not a What's Next profile code.");
+    }
+
+    document.getElementById("buddy-button").addEventListener("click", () => {
+      renderBuddies();
+      const code = makeProfileCode();
+      document.getElementById("buddy-profile-name").textContent =
+        `Connected as ${currentAccount}. Share your code or add a friend's.`;
+      document.getElementById("my-profile-code").value = code;
+      buddyBackdrop.classList.add("open");
+    });
+
+    document.getElementById("close-buddy-modal").addEventListener("click", () => {
+      buddyBackdrop.classList.remove("open");
+    });
+
+    buddyBackdrop.addEventListener("click", event => {
+      if (event.target === buddyBackdrop) buddyBackdrop.classList.remove("open");
+    });
+
+    document.getElementById("copy-profile-code").addEventListener("click", async () => {
+      const code = makeProfileCode();
+      try {
+        await navigator.clipboard.writeText(code);
+        showToast("Profile code copied");
+      } catch (error) {
+        const input = document.createElement("textarea");
+        input.value = code;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        input.remove();
+        showToast("Profile code copied");
+      }
+    });
+
+    document.getElementById("add-buddy").addEventListener("click", () => {
+      const input = document.getElementById("buddy-code");
+      try {
+        const buddy = readProfileCode(input.value.trim());
+        if (buddy.name === currentAccount) throw new Error("You can't add your own profile.");
+        buddies = buddies.filter(existing => existing.name !== buddy.name);
+        buddies.push(buddy);
+        save();
+        renderBuddies();
+        input.value = "";
+        showToast(`Connected with ${buddy.name}`);
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+
+    const allTimeDetails = document.getElementById("all-time-details");
+    allTimeDetails.open = localStorage.getItem("whats-next-record-open") === "true";
+    allTimeDetails.addEventListener("toggle", () => {
+      localStorage.setItem("whats-next-record-open", String(allTimeDetails.open));
+    });
+
+    document.getElementById("done-button").addEventListener("pointerdown", () => {
+      if (!timerId && roundLabel.textContent !== "ROUND COMPLETE") startTimer();
+    }, { once: true });
+
+    renderStats();
+  </script>
+</body>
+</html>
